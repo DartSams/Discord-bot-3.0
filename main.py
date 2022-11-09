@@ -1,5 +1,6 @@
 import discord
 from discord.ext import tasks,commands
+from discord.utils import get
 # from discord.ext.commands import Bot
 from dotenv import load_dotenv
 import os
@@ -125,17 +126,29 @@ async def bye(ctx): # when ".bye" typed in servers bot replies to that message w
     print("goodbye")
     await ctx.reply("Goodbye")
 
-@bot.command()
-async def createAdmin(ctx): # function to create any user admin privilege Ex. ".createAdmin 3977"
-    split_message = ctx.message.content.lower().split(' ')
-    for user in main_table.table.find({ "name": ctx.author.name}):
-        print(user)
-        if user["privilege"] == "admin":
-            main_table.create_admin(split_message[1])
+# @bot.command()
+# async def createAdmin(ctx): # function to create any user admin privilege Ex. ".createAdmin 3977"
+#     split_message = ctx.message.content.lower().split(' ')
+#     for user in main_table.table.find({ "name": ctx.author.name}):
+#         print(user)
+#         if user["privilege"] == "admin":
+#             main_table.create_admin(split_message[1])
+
+
 
 @bot.command()
 async def showDb(ctx): # returns a list of all useds in db
     await ctx.send(main_table.show_entries())
+
+@bot.command(pass_context=True)
+async def giverole(ctx, arg: discord.Member, *, role:discord.Role): # function to create any user admin privilege Ex. ".giverole @Enemy of my Enemy admin"
+    for user in main_table.table.find({ "name": ctx.author.name}):
+        print(user)
+        if user["privilege"] == "admin":
+            main_table.create_admin(arg.discriminator)
+            await arg.add_roles(role) ###ERROR says bot is missing permissions
+
+
 
 @bot.command()
 async def addAll(ctx): # adds all members in all discord servers to the db
@@ -157,7 +170,7 @@ async def massDestroy(ctx): # deletes all users in db
 
 
 bot.run(os.getenv('discord_token'))
-
+ 
 
 ##TODO
 #in createAdmin function add functionality to give admin role
