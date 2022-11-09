@@ -1,12 +1,10 @@
 import discord
 from discord.ext import tasks,commands
 from discord.utils import get
-# from discord.ext.commands import Bot
 from dotenv import load_dotenv
 import os
 import random
 import json
-# from games.slots import *
 from MyDB import *
 
 
@@ -17,8 +15,6 @@ bot = commands.Bot(command_prefix = ".",intents=intents) #sets all bot commands 
 load_dotenv()
 
 main_table_name = "Discord_DB"
-# main_table = create_db(main_table_name)
-# admin_table = create_db("discord_admins")
 
 main_table = DiscordTable()
 main_table.create_db(main_table_name)
@@ -126,15 +122,6 @@ async def bye(ctx): # when ".bye" typed in servers bot replies to that message w
     print("goodbye")
     await ctx.reply("Goodbye")
 
-# @bot.command()
-# async def createAdmin(ctx): # function to create any user admin privilege Ex. ".createAdmin 3977"
-#     split_message = ctx.message.content.lower().split(' ')
-#     for user in main_table.table.find({ "name": ctx.author.name}):
-#         print(user)
-#         if user["privilege"] == "admin":
-#             main_table.create_admin(split_message[1])
-
-
 
 @bot.command()
 async def showDb(ctx): # returns a list of all useds in db
@@ -142,13 +129,26 @@ async def showDb(ctx): # returns a list of all useds in db
 
 @bot.command(pass_context=True)
 async def giverole(ctx, arg: discord.Member, *, role:discord.Role): # function to create any user admin privilege Ex. ".giverole @Enemy of my Enemy admin"
-    for user in main_table.table.find({ "name": ctx.author.name}):
+    for user in main_table.table.find({ "name": ctx.author.name}): #finds message sender in mongodb
         print(user)
-        if user["privilege"] == "admin":
-            main_table.create_admin(arg.discriminator)
-            await arg.add_roles(role) ###ERROR says bot is missing permissions
+        if user["privilege"] == "admin": #checks if user has privilege of admin
+            main_table.create_admin(arg.discriminator) # function to update privilege in mongodb
+            await arg.add_roles(role) # gives role to discord user mentioned in message sent (by mentioned name after @ symbol)
+            await ctx.send(f"{ctx.author} is now a {role}")
 
+@bot.command(pass_context=True)
+async def createrole(ctx): # creates a new role Ex. .createrole creator
+    for user in main_table.table.find({ "name": ctx.author.name}): #finds message sender in mongodb
+        print(user)
+        if user["privilege"] == "admin": #checks if user has privilege of admin
+            print(ctx.message.content)
+            split_message = ctx.message.content.split(" ") 
+            new_role_name = split_message[1]
+            await ctx.guild.create_role(name=new_role_name) #creates a role in discord server where message was sent
+            await ctx.send(f"{new_role_name} has been created")
 
+        else: #if message sender isnt a admin in the mongodb
+            await ctx.send("Your not a admin cant give roles contact a admin")
 
 @bot.command()
 async def addAll(ctx): # adds all members in all discord servers to the db
@@ -171,6 +171,5 @@ async def massDestroy(ctx): # deletes all users in db
 
 bot.run(os.getenv('discord_token'))
  
-
 ##TODO
-#in createAdmin function add functionality to give admin role
+#in createrole function 
