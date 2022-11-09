@@ -31,16 +31,16 @@ async def on_ready():
     print(f"{bot.user} is here")
 
     ##shows every server that the bot is on
-    for i in bot.guilds:
+    # for i in bot.guilds:
     #     print(i.name)
         # print(i.members)
         # print(i.id)
         # guildMembers[i.name] = {} #gets all servers bot is in and creates empty dict of that name
         
         ##list all the members in every server that the bot is in
-        for member in i.members:
+        # for member in i.members:
             # print(member.name,member.discriminator)
-            main_table.insert_user(member.name,member.discriminator)
+            # main_table.insert_user(member.name,member.discriminator)
             # insert_user(f'{member.discriminator}',starting_balance)
             # guildMembers[i.name][member.name] = [member.name,member.discriminator] #gets all users in current server loop and creates new entry
 
@@ -51,38 +51,6 @@ async def on_ready():
 
     # print(guildMembers)
     auto_send.start() #function to automatically send messages to any channel using the channel id
-
-# @bot.event
-# async def on_message(message):
-#     print(message.content)
-    ##for setting up personal commands
-    # for x in main_table.table.find({},{ "name": message.author.name}):
-    #     print(x)
-
-    # if message.author.name=='Enemy of my Enemy' and message.author.discriminator=='3977':
-    #     print("\nmessage details:")
-    #     print(message.author)
-    #     print("\nmessage content:")
-    #     print(f"{message.content} \n")
-    #     my_message=message.content.lower().split(' ')
-    #     print("message after split:")
-    #     print(my_message)
-
-    #     ##add a user to db
-    #     if my_message[0]=='.create':
-    #         try:
-    #             main_table.insert_user(f"{my_message[1]}",f"{my_message[2]}")
-    #         # print(my_message)
-    #         except:
-    #             await message.channel.send('To create a user you need a username and discriminator id (4 digit code on profile)')
-
-    #     ##Show all the intries in db
-    #     if my_message[0]=='.show_db':
-    #         # show_entries('Discord_db')
-    #         await message.channel.send(main_table.show_entries())
-
-    #     if my_message == ".detroy":
-    #         main_table.mass_destry()
 
 @tasks.loop(hours=1.0)
 async def auto_send():
@@ -140,15 +108,8 @@ async def auto_send():
             meme = meme_list["meme"][str(random.randint(0,759))]
             await channel_meme.send(meme)
 
-
 @bot.command()
-async def hello(ctx):
-    ##ctx.message.author.name returns name of who sent the message
-    ##ctx.message returns the text content of the message
-    ##ctx.author returns the author data of the message 
-    ##ctx.author.name returns just the name without the discriminator id attached
-    ##ctx.message.content returns what was said in chat
-    ##ctx.send() sends a message in the chat a message was sent
+async def hello(ctx): # when ".hello" typed in servers bot replies to that message with "Hello World"
     print(ctx.message.content)
     print("\nmessage details:")
     print(ctx)
@@ -160,21 +121,43 @@ async def hello(ctx):
     await ctx.reply("Hello world") #sends a reply to that message
 
 @bot.command()
-async def bye(ctx):
+async def bye(ctx): # when ".bye" typed in servers bot replies to that message with "Goodbye"
     print("goodbye")
     await ctx.reply("Goodbye")
 
 @bot.command()
-async def createAdmin(ctx):
-    split_message = ctx.content.lower.split(" ")
+async def createAdmin(ctx): # function to create any user admin privilege Ex. ".createAdmin 3977"
+    split_message = ctx.message.content.lower().split(' ')
     for user in main_table.table.find({ "name": ctx.author.name}):
         print(user)
         if user["privilege"] == "admin":
-            main_table.create_admin(ctx.author.discriminator)
+            main_table.create_admin(split_message[1])
 
 @bot.command()
-async def showDb(ctx):
+async def showDb(ctx): # returns a list of all useds in db
     await ctx.send(main_table.show_entries())
+
+@bot.command()
+async def addAll(ctx): # adds all members in all discord servers to the db
+    for i in bot.guilds:
+        # print(i.name)
+        # print(i.members)
+        # print(i.id)
+        # guildMembers[i.name] = {} #gets all servers bot is in and creates empty dict of that name
+        
+        ##list all the members in every server that the bot is in
+        for member in i.members:
+            print(member.name,member.discriminator)
+            main_table.insert_user(member.name,member.discriminator)
+
+
+@bot.command()
+async def massDestroy(ctx): # deletes all users in db
+    main_table.mass_destry()
 
 
 bot.run(os.getenv('discord_token'))
+
+
+##TODO
+#in createAdmin function add functionality to give admin role
