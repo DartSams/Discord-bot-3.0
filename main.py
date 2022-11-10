@@ -139,14 +139,25 @@ async def giverole(ctx, arg: discord.Member, *, role:discord.Role): # function t
 @bot.command(pass_context=True)
 async def createrole(ctx): # creates a new role Ex. .createrole creator
     for user in main_table.table.find({ "name": ctx.author.name}): #finds message sender in mongodb
-        print(user)
+        # print(user)
         if user["privilege"] == "admin": #checks if user has privilege of admin
-            print(ctx.message.content)
+            # print(ctx.message.content)
             split_message = ctx.message.content.split(" ") 
             new_role_name = split_message[1]
-            await ctx.guild.create_role(name=new_role_name) #creates a role in discord server where message was sent
-            await ctx.send(f"{new_role_name} has been created")
+            color_message = split_message[2]
+            with open("colors.json","r") as f: # opens the hex color json file
+                data = json.load(f)
+                for color in data:
+                    # print(i["name"])
+                    if color["name"].lower() == color_message: # when iterating through hex data in json file checks if current iteration has name equal to what was sent in the message
+                        # print(color["hex"])
+                        color_hex = color["hex"]
+                        discord_hex_color_value = discord.Colour.from_str(color_hex).value # calls discord Colour function that takes a str of hex or hsv value that returns the associated color value
+                        await ctx.guild.create_role(name=new_role_name,colour=discord_hex_color_value) #creates a role in discord server where message was sent
+                        await ctx.send(f"{new_role_name} has been created")
 
+                    else:
+                        await ctx.reply("No color found")
         else: #if message sender isnt a admin in the mongodb
             await ctx.send("Your not a admin cant give roles contact a admin")
 
