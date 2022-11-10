@@ -8,6 +8,10 @@ import json
 from MyDB import *
 
 
+##docs##
+#https://discordpy.readthedocs.io/en/latest/api.html
+#dev portal (make a bot)
+
 ##needs intents to check member status's like when joining/leaving server...
 intents = discord.Intents.all()
 intents.members = True
@@ -15,12 +19,11 @@ bot = commands.Bot(command_prefix = ".",intents=intents) #sets all bot commands 
 load_dotenv()
 
 main_table_name = "Discord_DB"
-
 main_table = DiscordTable()
 main_table.create_db(main_table_name)
 
-admin_table = DiscordTable()
-admin_table.create_db("discord_admins")
+high_level_roles = ["admin"] # list of top level role names to give admin status
+
 
 @bot.event
 async def on_ready():
@@ -145,19 +148,23 @@ async def createrole(ctx): # creates a new role Ex. .createrole creator
             split_message = ctx.message.content.split(" ") 
             new_role_name = split_message[1]
             color_message = split_message[2]
-            with open("colors.json","r") as f: # opens the hex color json file
-                data = json.load(f)
-                for color in data:
+            with open("colors.json","r") as c: # opens the hex color json file
+                data_file = json.load(c)
+                for color in data_file:
                     # print(i["name"])
                     if color["name"].lower() == color_message: # when iterating through hex data in json file checks if current iteration has name equal to what was sent in the message
-                        # print(color["hex"])
+                        print(color["hex"])
                         color_hex = color["hex"]
                         discord_hex_color_value = discord.Colour.from_str(color_hex).value # calls discord Colour function that takes a str of hex or hsv value that returns the associated color value
-                        await ctx.guild.create_role(name=new_role_name,colour=discord_hex_color_value) #creates a role in discord server where message was sent
+                        if new_role_name in high_level_roles:
+                            permission_value = 8 # set the default to 8 for all admin priv
+                        else:
+                            permission_value = 0 # set the default to 0 for all roles that arent admin
+
+                        permission_value = discord.Permissions(permissions=permission_value) # calls discord Permission function that takes a integer value that represents the value of privileges to give to a role found on discord dev portal under bot section
+                        await ctx.guild.create_role(name=new_role_name,colour=discord_hex_color_value,permissions=permission_value) #creates a role in discord server where message was sent
                         await ctx.send(f"{new_role_name} has been created")
 
-                    else:
-                        await ctx.reply("No color found")
         else: #if message sender isnt a admin in the mongodb
             await ctx.send("Your not a admin cant give roles contact a admin")
 
@@ -182,5 +189,3 @@ async def massDestroy(ctx): # deletes all users in db
 
 bot.run(os.getenv('discord_token'))
  
-##TODO
-#in createrole function 
