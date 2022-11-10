@@ -105,7 +105,7 @@ async def auto_send():
             meme = meme_list["meme"][str(random.randint(0,759))]
             await channel_meme.send(meme)
 
-@bot.command()
+@bot.command() # decorator basically called when discord message starts with command_prefix 
 async def hello(ctx): # when ".hello" typed in servers bot replies to that message with "Hello World"
     print(ctx.message.content)
     print("\nmessage details:")
