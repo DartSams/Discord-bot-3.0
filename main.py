@@ -1,7 +1,11 @@
 import discord
 from discord.ext import tasks,commands
+from discord.ext.commands import has_permissions
+# from discord import Option
+from discord import SelectOption #the option module can give users a dropdown of choices when option is passed in the function
 from discord.utils import get
 from dotenv import load_dotenv
+from datetime import timedelta
 import os
 import random
 import json
@@ -187,5 +191,64 @@ async def massDestroy(ctx): # deletes all users in db
     main_table.mass_destry()
 
 
+@bot.command()
+async def ban(ctx,member:discord.Member,reason=None):
+    for user in main_table.table.find({ "name": ctx.author.name}): #finds message sender in mongodb
+        # print(user)
+        if user["privilege"] == "admin" and ctx.message.author.guild_permissions.administrator: #checks if user has privilege of admin in mongodb and checks in discord roles
+            print(ctx.message.content)
+            print(member,reason)
+            await member.ban()
+            await ctx.reply(f"{member} has now been banned")
+
+        else: # if message author isnt a admin
+            print("User is not admin")
+            await ctx.reply(f"{ctx.author.name} is not a admin")
+
+@bot.command()
+async def unban(ctx,member:discord.Member,reason=None):
+    for user in main_table.table.find({ "name": ctx.author.name}): #finds message sender in mongodb
+        # print(user)
+        if user["privilege"] == "admin" and ctx.message.author.guild_permissions.administrator: #checks if user has privilege of admin in mongodb and checks in discord roles
+            print(ctx.message.content)
+            print(member,reason)
+            await member.unban()
+            await ctx.reply(f"{member} has now been unbanned")
+
+        else: # if message author isnt a admin
+            print("User is not admin")
+            await ctx.reply(f"{ctx.author.name} is not a admin")
+
+@bot.command()
+async def kick(ctx,member:discord.Member,reason=None):
+    for user in main_table.table.find({ "name": ctx.author.name}): #finds message sender in mongodb
+        # print(user)
+        if user["privilege"] == "admin" and ctx.message.author.guild_permissions.administrator: #checks if user has privilege of admin in mongodb and checks in discord roles
+            print(ctx.message.content)
+            print(member,reason)
+            await member.kick()
+            await ctx.reply(f"{member} has now been kicked")
+
+        else: # if message author isnt a admin
+            print("User is not admin")
+            await ctx.reply(f"{ctx.author.name} is not a admin")
+
+@bot.command()
+async def mute(ctx,member:discord.Member,time):
+    for user in main_table.table.find({ "name": ctx.author.name}): #finds message sender in mongodb
+        # print(user)
+        if user["privilege"] == "admin" and ctx.message.author.guild_permissions.administrator: #checks if user has privilege of admin in mongodb and checks in discord roles
+            print(ctx.message.content)
+            print(member,time)
+            g = timedelta(days=1)
+            await member.timeout(g)
+            await ctx.reply(f"{member} has now been muted for")
+
+        else: # if message author isnt a admin
+            print("User is not admin")
+            await ctx.reply(f"{ctx.author.name} is not a admin")
+
 bot.run(os.getenv('discord_token'))
  
+
+
