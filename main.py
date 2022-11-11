@@ -1,9 +1,5 @@
 import discord
 from discord.ext import tasks,commands
-from discord.ext.commands import has_permissions
-# from discord import Option
-from discord import SelectOption #the option module can give users a dropdown of choices when option is passed in the function
-from discord.utils import get
 from dotenv import load_dotenv
 from datetime import timedelta
 import os
@@ -19,7 +15,7 @@ from MyDB import *
 ##needs intents to check member status's like when joining/leaving server...
 intents = discord.Intents.all()  
 intents.members = True
-bot = commands.Bot(command_prefix = ".",intents=intents) #sets all bot commands to be required that all commands start with a "."
+bot = commands.Bot(command_prefix = "/",intents=intents) #sets all bot commands to be required that all commands start with a "."
 load_dotenv()
 
 main_table_name = "Discord_DB"
@@ -138,16 +134,25 @@ async def showDb(ctx): # returns a list of all useds in db
 async def giverole(ctx, arg: discord.Member, *, role:discord.Role): # function to create any user admin privilege Ex. ".giverole @Enemy of my Enemy admin"
     for user in main_table.table.find({ "name": ctx.author.name}): #finds message sender in mongodb
         print(user)
-        if user["privilege"] == "admin": #checks if user has privilege of admin
+        if user["privilege"] == "admin" and ctx.message.author.guild_permissions.administrator: #checks if user has privilege of admin
             main_table.create_admin(arg.discriminator) # function to update privilege in mongodb
             await arg.add_roles(role) # gives role to discord user mentioned in message sent (by mentioned name after @ symbol)
             await ctx.send(f"{ctx.author} is now a {role}")
 
 @bot.command(pass_context=True)
+async def takerole(ctx, arg: discord.Member, *, role:discord.Role): # function to create any user admin privilege Ex. ".giverole @Enemy of my Enemy admin"
+    for user in main_table.table.find({ "name": ctx.author.name}): #finds message sender in mongodb
+        print(user)
+        if user["privilege"] == "admin" and ctx.message.author.guild_permissions.administrator: #checks if user has privilege of admin
+            main_table.create_admin(arg.discriminator) # function to update privilege in mongodb
+            await arg.remove_roles(role) # gives role to discord user mentioned in message sent (by mentioned name after @ symbol)
+            await ctx.send(f"{ctx.author} is no longer a {role}")
+
+@bot.command(pass_context=True)
 async def createrole(ctx): # creates a new role Ex. .createrole creator
     for user in main_table.table.find({ "name": ctx.author.name}): #finds message sender in mongodb
         # print(user)
-        if user["privilege"] == "admin": #checks if user has privilege of admin
+        if user["privilege"] == "admin" and ctx.message.author.guild_permissions.administrator: #checks if user has privilege of admin
             # print(ctx.message.content)
             split_message = ctx.message.content.split(" ") 
             new_role_name = split_message[1]
@@ -175,9 +180,9 @@ async def createrole(ctx): # creates a new role Ex. .createrole creator
 @bot.command()
 async def addAll(ctx): # adds all members in all discord servers to the db
     for i in bot.guilds:
-        # print(i.name)
-        # print(i.members)
-        # print(i.id)
+        # print(i.name) #return iterated server names
+        # print(i.members) #returns list of all members in iterated server
+        # print(i.id) # returns iterated id of server
         # guildMembers[i.name] = {} #gets all servers bot is in and creates empty dict of that name
         
         ##list all the members in every server that the bot is in
@@ -192,7 +197,7 @@ async def massDestroy(ctx): # deletes all users in db
 
 
 @bot.command()
-async def ban(ctx,member:discord.Member,reason=None):
+async def ban(ctx,member:discord.Member,reason=None): # kicks someone from server and bans them so they can rejoin Ex. .ban @Enemy of my Enemy was being rude
     for user in main_table.table.find({ "name": ctx.author.name}): #finds message sender in mongodb
         # print(user)
         if user["privilege"] == "admin" and ctx.message.author.guild_permissions.administrator: #checks if user has privilege of admin in mongodb and checks in discord roles
@@ -206,7 +211,7 @@ async def ban(ctx,member:discord.Member,reason=None):
             await ctx.reply(f"{ctx.author.name} is not a admin")
 
 @bot.command()
-async def unban(ctx,member:discord.Member,reason=None):
+async def unban(ctx,member:discord.Member,reason=None): # unbans someone from server Ex. .unban @Enemy of my Enemy has earned a free pass
     for user in main_table.table.find({ "name": ctx.author.name}): #finds message sender in mongodb
         # print(user)
         if user["privilege"] == "admin" and ctx.message.author.guild_permissions.administrator: #checks if user has privilege of admin in mongodb and checks in discord roles
@@ -220,7 +225,7 @@ async def unban(ctx,member:discord.Member,reason=None):
             await ctx.reply(f"{ctx.author.name} is not a admin")
 
 @bot.command()
-async def kick(ctx,member:discord.Member,reason=None):
+async def kick(ctx,member:discord.Member,reason=None): # kicks server member from server that message was sent in Ex. .kick @Enemy of my Enemy was being rude
     for user in main_table.table.find({ "name": ctx.author.name}): #finds message sender in mongodb
         # print(user)
         if user["privilege"] == "admin" and ctx.message.author.guild_permissions.administrator: #checks if user has privilege of admin in mongodb and checks in discord roles
@@ -234,15 +239,24 @@ async def kick(ctx,member:discord.Member,reason=None):
             await ctx.reply(f"{ctx.author.name} is not a admin")
 
 @bot.command()
-async def mute(ctx,member:discord.Member,time):
+async def mute(ctx,member:discord.Member, time: int, how_long:str): # function that timeouts server members (member cant type/text in any channel in server for amount of time) Ex. .mute @Enemy of my Enemy 2 min
+    print(member,time,how_long)
     for user in main_table.table.find({ "name": ctx.author.name}): #finds message sender in mongodb
         # print(user)
         if user["privilege"] == "admin" and ctx.message.author.guild_permissions.administrator: #checks if user has privilege of admin in mongodb and checks in discord roles
             print(ctx.message.content)
-            print(member,time)
-            g = timedelta(days=1)
-            await member.timeout(g)
-            await ctx.reply(f"{member} has now been muted for")
+            print(member)
+            if how_long == "day" or how_long == "days":
+                member_timeout = timedelta(days=time) #timedelta returns the difference of current time and the amount passed
+            elif how_long == "hour" or how_long == "hours":
+                member_timeout = timedelta(hours=time) #timedelta returns the difference of current time and the amount passed
+            elif how_long == "min" or how_long == "minuts":
+                member_timeout = timedelta(minutes=time) #timedelta returns the difference of current time and the amount passed
+            else:
+                await ctx.send("Please enter a valid time in days,hours,minutes")
+
+            await member.timeout(member_timeout)
+            await ctx.reply(f"{member} has now been muted for {time} {how_long}")
 
         else: # if message author isnt a admin
             print("User is not admin")
