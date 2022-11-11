@@ -149,30 +149,31 @@ async def takerole(ctx, arg: discord.Member, *, role:discord.Role): # function t
             await ctx.send(f"{ctx.author} is no longer a {role}")
 
 @bot.command(pass_context=True)
-async def createrole(ctx): # creates a new role Ex. .createrole creator
+async def createrole(ctx,name:str,color_message:str): # creates a new role Ex. .createrole creator
     for user in main_table.table.find({ "name": ctx.author.name}): #finds message sender in mongodb
         # print(user)
         if user["privilege"] == "admin" and ctx.message.author.guild_permissions.administrator: #checks if user has privilege of admin
             # print(ctx.message.content)
-            split_message = ctx.message.content.split(" ") 
-            new_role_name = split_message[1]
-            color_message = split_message[2]
             with open("colors.json","r") as c: # opens the hex color json file
-                data_file = json.load(c)
-                for color in data_file:
+                data_file_color = json.load(c)
+                for color in data_file_color:
                     # print(i["name"])
                     if color["name"].lower() == color_message: # when iterating through hex data in json file checks if current iteration has name equal to what was sent in the message
-                        print(color["hex"])
+                        # print(color["hex"])
                         color_hex = color["hex"]
                         discord_hex_color_value = discord.Colour.from_str(color_hex).value # calls discord Colour function that takes a str of hex or hsv value that returns the associated color value
-                        if new_role_name in high_level_roles:
-                            permission_value = 8 # set the default to 8 for all admin priv
-                        else:
-                            permission_value = 0 # set the default to 0 for all roles that arent admin
+                        with open("permission.json","r") as p:
+                            data_file_permission = json.load(p)
+                            for permission in data_file_permission:
+                                if permission["name"].lower() == name: #when iterating through permission data 
+                                    if name in high_level_roles:
+                                        permission_value = permission["value"] # set the permission value to be a integer which is a combined number based on discords own algorithm
+                                    else:
+                                        permission_value = 0 # set the default to 0 for all roles if not found in permission.json file
 
-                        permission_value = discord.Permissions(permissions=permission_value) # calls discord Permission function that takes a integer value that represents the value of privileges to give to a role found on discord dev portal under bot section
-                        await ctx.guild.create_role(name=new_role_name,colour=discord_hex_color_value,permissions=permission_value) #creates a role in discord server where message was sent
-                        await ctx.send(f"{new_role_name} has been created")
+                                    permission_value = discord.Permissions(permissions=permission_value) # calls discord Permission function that takes a integer value that represents the value of privileges to give to a role found on discord dev portal under bot section
+                                    await ctx.guild.create_role(name=name,colour=discord_hex_color_value,permissions=permission_value) #creates a role in discord server where message was sent
+                                    await ctx.send(f"{name} has been created")
 
         else: #if message sender isnt a admin in the mongodb
             await ctx.send("Your not a admin cant give roles contact a admin")
