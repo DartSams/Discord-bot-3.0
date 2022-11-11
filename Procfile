@@ -1,1 +1,1 @@
-worker: python main_noDB.py
+worker: python main.py
