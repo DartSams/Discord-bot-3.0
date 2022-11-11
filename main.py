@@ -119,6 +119,7 @@ async def hello(ctx): # when ".hello" typed in servers bot replies to that messa
     print("message after split:")
     print(my_message)
     await ctx.reply("Hello world") #sends a reply to that message
+    await ctx.reply("https://i.scdn.co/image/ab6761610000e5eb72c4ca30476ce87954961a10")
 
 @bot.command()
 async def bye(ctx): # when ".bye" typed in servers bot replies to that message with "Goodbye"
@@ -263,7 +264,11 @@ async def mute(ctx,member:discord.Member, time: int, how_long:str): # function t
             print("User is not admin")
             await ctx.reply(f"{ctx.author.name} is not a admin")
 
+
+
+@bot.command()
+async def sp(ctx,spotify_artist:str):
+    pass
+
+
 bot.run(os.getenv('discord_token'))
- 
-
-
