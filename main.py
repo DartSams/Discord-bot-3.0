@@ -17,7 +17,7 @@ from MyDB import *
 #dev portal (make a bot)
 
 ##needs intents to check member status's like when joining/leaving server...
-intents = discord.Intents.all()
+intents = discord.Intents.all()  
 intents.members = True
 bot = commands.Bot(command_prefix = ".",intents=intents) #sets all bot commands to be required that all commands start with a "."
 load_dotenv()
