@@ -6,6 +6,7 @@ import os
 import random
 import json
 from MyDB import *
+from spotify import Spotify
 
 
 ##docs##
@@ -15,7 +16,7 @@ from MyDB import *
 ##needs intents to check member status's like when joining/leaving server...
 intents = discord.Intents.all()  
 intents.members = True
-bot = commands.Bot(command_prefix = "/",intents=intents) #sets all bot commands to be required that all commands start with a "."
+bot = commands.Bot(command_prefix = ".",intents=intents) #sets all bot commands to be required that all commands start with a "."
 load_dotenv()
 
 main_table_name = "Discord_DB"
@@ -264,11 +265,38 @@ async def mute(ctx,member:discord.Member, time: int, how_long:str): # function t
             print("User is not admin")
             await ctx.reply(f"{ctx.author.name} is not a admin")
 
-
-
 @bot.command()
-async def sp(ctx,spotify_artist:str):
-    pass
+async def sp(ctx):
+    message = ctx.message.content.split('-')
+    spotify_artist = message[1]
+    album_name = message[2].replace(" ","")
+    # print(message)
+    print(spotify_artist,album_name)
+    s = Spotify()
+    # print(s.get_artist_album(spotify_artist,album_name))
+    # artist = s.search(spotify_artist)
+    # # print(spotify_data)
+
+    if album_name:
+        # print("3434")
+        artist = s.search(spotify_artist)
+        data = {}
+        for i in s.album_list:
+            # print(i["name"])
+            if album_name.lower() == i["name"].lower():
+                # print(i["id"])
+                album = s.get_album(i["id"])
+                data["artist"] = artist
+                data["album"] = album
+                # await ctx.send(data)
+                await ctx.send(data["artist"]["pic"])
+                await ctx.send(data["artist"]["name"])
+                await ctx.send(data["album"]["album_url"])
+    # await ctx.send(s.search(spotify_artist))
+    else:
+        await ctx.send(artist["pic"])
+        await ctx.send(artist["name"])
+
 
 
 bot.run(os.getenv('discord_token'))
