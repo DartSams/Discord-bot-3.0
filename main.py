@@ -6,7 +6,7 @@ import os
 import random
 import json
 from MyDB import *
-from spotify import Spotify
+from Spotify_API import Spotify
 
 
 ##docs##
@@ -274,12 +274,12 @@ async def sp(ctx):
     print(spotify_artist,album_name)
     s = Spotify()
     # print(s.get_artist_album(spotify_artist,album_name))
-    # artist = s.search(spotify_artist)
+    artist = s.search(spotify_artist)
     # # print(spotify_data)
 
     if album_name:
         # print("3434")
-        artist = s.search(spotify_artist)
+        # artist = s.search(spotify_artist)
         data = {}
         for i in s.album_list:
             # print(i["name"])
@@ -292,6 +292,10 @@ async def sp(ctx):
                 await ctx.send(data["artist"]["pic"])
                 await ctx.send(data["artist"]["name"])
                 await ctx.send(data["album"]["album_url"])
+            
+            elif album_name.lower() == "albums":
+                all_albums = s.get_all_albums()
+                await ctx.send(all_albums)
     # await ctx.send(s.search(spotify_artist))
     else:
         await ctx.send(artist["pic"])
