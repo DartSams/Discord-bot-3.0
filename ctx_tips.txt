@@ -1,7 +1,0 @@
-##ctx.message.author.name returns name of who sent the message
-##ctx.message returns the text data of the message
-##ctx.author returns the author data of the message 
-##ctx.author.name returns just the name without the discriminator id attached
-##ctx.message.content returns what was said in chat
-##ctx.send sends a message in the chat a message was sent
-##ctx.reply replies to the message that was recieved in that function
