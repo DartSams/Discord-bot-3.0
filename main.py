@@ -1,13 +1,13 @@
 import discord
-from discord.ext import tasks,commands
+from discord.ext import tasks, commands
 from dotenv import load_dotenv
 from datetime import timedelta
 import os
 import random
 import json
-from MyDB import *
+from MyDB import DiscordTable
 import Spotify_API
-from linkedin import *
+from linkedin import transform, extract
 ##docs##
 #https://discordpy.readthedocs.io/en/latest/api.html
 #dev portal (make a bot)
@@ -129,9 +129,13 @@ async def auto_send():
     #     Gimme some bambo in here, pwease! Panda-chan's tummy needs some yummies to munch on! Nom nom nom!
     #     """
     # )
-    # for i in transform(extract("computer science")):
-    #     channel = await bot.fetch_channel(str(channel_ids["GameDevelopmentServer"]["postings"]))
-    #     await channel.send(i["link"])
+    jobs = [
+        "Computer Science", "IT", "Software Engineer", "Software Developer",
+        "Game Programmer", "Game Developer", "Fellowship", "Cybersecurity"
+    ]
+    for i in transform(extract(random.choice(jobs))):
+        channel = await bot.fetch_channel(str(channel_ids["GameDevelopmentServer"]["postings"]))
+        await channel.send(i["link"])
 
 
 @bot.command() # decorator basically called when discord message starts with command_prefix 
@@ -164,9 +168,18 @@ async def scrape(ctx):
     # await ctx.send(my_message[1])
     channel = await bot.fetch_channel(channel_ids["GameDevelopmentServer"][my_message[1]]) #send a message to the channel the user wants (.scrape -> {channel name}->web developer) Ex. .scrape -> postings->web developer
     # await channel.send(my_message[2])
-    for i in transform(extract(my_message[2],my_message[3],my_message[4])): #calls bs4 functions in file to return a list of job objects
-        channel = await bot.fetch_channel(str(channel_ids["GameDevelopmentServer"]["postings"]))
-        await channel.send(i["link"]) 
+    if len(my_message) == 3: #searches only job type
+        for i in transform(extract(my_message[2])): #calls bs4 functions in file to return a list of job objects
+            channel = await bot.fetch_channel(str(channel_ids["GameDevelopmentServer"]["postings"]))
+            await channel.send(i["link"]) 
+    elif len(my_message) == 4: #searches job type and location
+        for i in transform(extract(my_message[2],my_message[3])): #calls bs4 functions in file to return a list of job objects
+            channel = await bot.fetch_channel(str(channel_ids["GameDevelopmentServer"]["postings"]))
+            await channel.send(i["link"]) 
+    elif len(my_message) == 5: #searches job type and location
+        for i in transform(extract(my_message[2],my_message[3],my_message[4])): #calls bs4 functions in file to return a list of job objects
+            channel = await bot.fetch_channel(str(channel_ids["GameDevelopmentServer"]["postings"]))
+            await channel.send(i["link"]) 
 
 @bot.command()
 async def bye(ctx): # when ".bye" typed in servers bot replies to that message with "Goodbye"
