@@ -7,8 +7,7 @@ import random
 import json
 from MyDB import *
 import Spotify_API
-
-
+from linkedin import *
 ##docs##
 #https://discordpy.readthedocs.io/en/latest/api.html
 #dev portal (make a bot)
@@ -125,11 +124,15 @@ async def auto_send():
     1047890946110521354
     """
     channel = await bot.fetch_channel(str(channel_ids["GameDevelopmentServer"]["general"]))
-    await channel.send(
-        """
-        Gimme some bambo in here, pwease! Panda-chan's tummy needs some yummies to munch on! Nom nom nom!
-        """
-    )
+    # await channel.send(
+    #     """
+    #     Gimme some bambo in here, pwease! Panda-chan's tummy needs some yummies to munch on! Nom nom nom!
+    #     """
+    # )
+    for i in transform(extract("computer science")):
+        channel = await bot.fetch_channel(str(channel_ids["GameDevelopmentServer"]["postings"]))
+        await channel.send(i["link"])
+
 
 @bot.command() # decorator basically called when discord message starts with command_prefix 
 async def hello(ctx): # when ".hello" typed in servers bot replies to that message with "Hello World"
@@ -149,8 +152,20 @@ async def newmessage(ctx):
     my_message=ctx.message.content.lower().split('->')
     print(ctx.guild)
     # await ctx.send(my_message[1])
-    channel = await bot.fetch_channel(channel_ids["GameDevelopmentServer"][my_message[1]])
-    await channel.send(my_message[2])
+    channel = await bot.fetch_channel(channel_ids["GameDevelopmentServer"][my_message[1]]) #send a message to the channel the user wants (.newmessage -> {channel name}->web developer) Ex. .newmessage -> postings->web developer
+    await channel.send(my_message[2]) #makes the bot send the message that is withing the 3 index of the message send (.newmessage -> {channel name}->{message})
+    
+@bot.command()
+async def scrape(ctx):
+    my_message=ctx.message.content.lower().split('->')
+    print(ctx.guild)
+    print(my_message)
+    # await ctx.send(my_message[1])
+    channel = await bot.fetch_channel(channel_ids["GameDevelopmentServer"][my_message[1]]) #send a message to the channel the user wants (.scrape -> {channel name}->web developer) Ex. .scrape -> postings->web developer
+    # await channel.send(my_message[2])
+    for i in transform(extract(my_message[2],my_message[3])): #calls bs4 functions in file to return a list of job objects
+        channel = await bot.fetch_channel(str(channel_ids["GameDevelopmentServer"]["postings"]))
+        await channel.send(i["link"]) 
 
 @bot.command()
 async def bye(ctx): # when ".bye" typed in servers bot replies to that message with "Goodbye"
