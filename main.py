@@ -129,9 +129,9 @@ async def auto_send():
     #     Gimme some bambo in here, pwease! Panda-chan's tummy needs some yummies to munch on! Nom nom nom!
     #     """
     # )
-    for i in transform(extract("computer science")):
-        channel = await bot.fetch_channel(str(channel_ids["GameDevelopmentServer"]["postings"]))
-        await channel.send(i["link"])
+    # for i in transform(extract("computer science")):
+    #     channel = await bot.fetch_channel(str(channel_ids["GameDevelopmentServer"]["postings"]))
+    #     await channel.send(i["link"])
 
 
 @bot.command() # decorator basically called when discord message starts with command_prefix 
@@ -158,12 +158,13 @@ async def newmessage(ctx):
 @bot.command()
 async def scrape(ctx):
     my_message=ctx.message.content.lower().split('->')
+    # posting = my_message[1].split("-")
     print(ctx.guild)
     print(my_message)
     # await ctx.send(my_message[1])
     channel = await bot.fetch_channel(channel_ids["GameDevelopmentServer"][my_message[1]]) #send a message to the channel the user wants (.scrape -> {channel name}->web developer) Ex. .scrape -> postings->web developer
     # await channel.send(my_message[2])
-    for i in transform(extract(my_message[2],my_message[3])): #calls bs4 functions in file to return a list of job objects
+    for i in transform(extract(my_message[2],my_message[3],my_message[4])): #calls bs4 functions in file to return a list of job objects
         channel = await bot.fetch_channel(str(channel_ids["GameDevelopmentServer"]["postings"]))
         await channel.send(i["link"]) 
 
@@ -347,4 +348,6 @@ async def sp(ctx): #function to query spotify artist and/or album Ex. .sp -kota 
 
 
 
-bot.run(os.getenv('discord_token'))
+# bot.run(os.environ('discord_token'))
+my_secret = os.environ['Discord_Token']
+bot.run(my_secret)

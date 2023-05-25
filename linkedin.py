@@ -6,15 +6,15 @@ import requests
 #when scraping and getting html classes do in incognito browser html is different when signed in on browser
 
 
-def extract(job_name,location):
+def extract(job_name,location_type="hybrid",location="United States"):
     job_name = job_name.replace(" ","%20") #needed because in parsing spaces are treated as %20
-    if location == "remote":
+    if location_type == "remote":
         num = 2 #linkedin query for remote jobs
-    elif location == "onsite":
+    elif location_type == "onsite":
         num = 1 #linkedin query for on site jobs
-    elif location == "hybrid":
+    elif location_type == "hybrid":
         num = 3 #linkedin query for hybrid jobs
-    url=rf'https://www.linkedin.com/jobs/search/?keywords={job_name}&f_TPR=&f_WT={num}&refresh=true&position=1&pageNum=0'
+    url=rf'https://www.linkedin.com/jobs/search/?keywords={job_name}&location={location}&f_TPR=&f_WT={num}&refresh=true&position=1&pageNum=0'
     r=requests.get(url)
     soup=BeautifulSoup(r.content,'html.parser')
     return soup
