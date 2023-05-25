@@ -1,13 +1,3 @@
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-
-
 import os
 from pymongo import MongoClient
 
@@ -15,16 +5,6 @@ from pymongo import MongoClient
 db_str = "mongodb+srv://DartSams:Dartagnan_19@personal-cluser-db.qavgfkq.mongodb.net/?retryWrites=true&w=majority"
 client = MongoClient(db_str)
 mydb = client["Personal_db"] #connects to db but if not found will create it 
-# table1 = mydb["Hiders"] #connects to table but if not found will create it 
-
-# create_db('Discord_DB')
-
-
-# insert_user('enemy of my enemy','3977')
-
-
-# delete_user('enemy of my enemy','3977')
-
 
 class DiscordTable:
     def __init__(self):
@@ -81,3 +61,36 @@ class DiscordTable:
 # z.create_db("Discord_DB")
 
 # z.mass_destry()
+
+
+class Reminder:
+    def __init__(self):
+        self.table = None
+        self.admins = []
+
+    def create_db(self,table_name:str):
+        main_table = mydb[table_name]
+        self.table = main_table
+        return main_table
+
+    def create_reminder(self,author:str,name:str,task:str,due_date:str):
+        data = {
+            "name":name,
+            "task":task,
+            "due_date":due_date,
+            "made_by":author
+        }
+
+        self.table.insert_one(data)
+
+    def delete_reminder(self,name):
+        myquery = {
+            "name": name,
+        }
+
+        self.table.delete_one(myquery)
+
+
+r = Reminder()
+r.create_db("Reminder")
+# r.create_reminder("calculus","make 5 page notes","Dec 5 2022")

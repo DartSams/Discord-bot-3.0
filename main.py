@@ -6,7 +6,7 @@ import os
 import random
 import json
 from MyDB import *
-from Spotify_API import Spotify
+import Spotify_API
 
 
 ##docs##
@@ -24,7 +24,46 @@ main_table = DiscordTable()
 main_table.create_db(main_table_name)
 
 high_level_roles = ["admin"] # list of top level role names to give admin status
-
+channel_ids = {
+    "test-server":{},
+    "GameDevelopmentServer":{
+        "concept":1047893711771676702,
+        "pixel":1047899028211384380,
+        "deadlines":1047898244933505114,
+        "3d-drawings":1047892668719579169,
+        "voice-acting":1050531521729142794,
+        "levels":1047897871267139586,
+        "github":1106368683208626209,
+        "sound design":1050531461066928158,
+        "idea-generator":1047892787892322304,
+        "gaming":1047903017942405190,
+        "postings":1111115259596517426,
+        "background-art":1047893634063810570,
+        "the rooftop":1047890947150716928,
+        "notifications":1047911263520440400,
+        "Admin Playground":1047891194157477989,
+        "Spitballing":1047892506127372288,
+        "playstation":1047903065237377094,
+        "xbox":1047903096560439327,
+        "test-commands":1047893027554873395,
+        "moderate":1047892984890392627,
+        "tiles":1047897829584142466,
+        "music":1050531492343840848,
+        "Job-postings":1111114688424583249,
+        "Art Showcase":1047891469316411443,
+        "Mainframe":1106368333789532190,
+        "home-talk":1047901611806183534,
+        "inspiration":1053367634420314123,
+        "general":1047890947150716930,
+        "steam":1047903119557791874,
+        "friday nights":1047899859119771809,
+        "2d-drawings":1047892607210106930,
+        "trello":1111115906265927740,
+        "personal":1047901381295603813,
+        "animation":1047902387223937114,
+        "talk":1047901188928045076
+    }
+}
 
 @bot.event
 async def on_ready():
@@ -34,8 +73,8 @@ async def on_ready():
     ##shows every server that the bot is on
     # for i in bot.guilds:
     #     print(i.name)
-        # print(i.members)
-        # print(i.id)
+    #     print(i.members)
+    #     print(i.id)
         # guildMembers[i.name] = {} #gets all servers bot is in and creates empty dict of that name
         
         ##list all the members in every server that the bot is in
@@ -53,17 +92,15 @@ async def on_ready():
     # print(guildMembers)
     auto_send.start() #function to automatically send messages to any channel using the channel id
 
+
 @tasks.loop(hours=1.0)
 async def auto_send():
     """
+    Old test server
     channel: Text Channels - id: 795114714560069692
     channel: Voice Channels - id: 795114714560069693
     channel: the-rooftop - id: 795114714560069694
     channel: General - id: 795114714560069695
-    channel: 18+ - id: 829488433642733578
-    channel: nudes - id: 829488509067853904
-    channel: hentai - id: 829488639783993345
-    channel: marinara - id: 829488855686053938
     channel: clips - id: 829488935909589073
     channel: memes - id: 829489020127936544
     channel: ps4 - id: 829489726020911156
@@ -74,40 +111,25 @@ async def auto_send():
     channel: music - id: 830554770435473508
     channel: weeb-world - id: 830555229862494239
     """ #all channel names and channel id
-    tag_str = {
-        "0":"media",
-        "1":"nsfw",
-        "2":"furry",
-        "3":"futa",
-        "4":"yaoi",
-        "5":"yuri",
-        "6":"traps",
-        "7":"irl"
-    }
-    #sends random image irl image to nude channel
-    channel_nude = await bot.fetch_channel('829488509067853904')
-    with open(r"images.json") as f:
-        images_list = json.load(f)
-        
-        image = images_list["irl"][str(random.randint(0,4607))]
-        await channel_nude.send(image["link"])
+    # channel_ids = {
+    #     "the-rooftop":"795114714560069694",
+    # }
+    
+    # channel = await bot.fetch_channel(channel_ids["GameDevelopmentServer"]["the-rooftop"])
+    # await channel.send('GOOD MORNING!')
 
-    # #sends random image nsfw or media image to hentai channel
-    channel_hentai = await bot.fetch_channel('829488639783993345')
-    with open(r"images.json") as f: 
-        images_list = json.load(f)
-        
-        image = images_list[tag_str[str(random.randrange(0,2))]][str(random.randint(0,4607))]
-        await channel_hentai.send(image["link"])
-
-    #sends random image meme image to meme channel
-    channel_meme = await bot.fetch_channel('829489020127936544')
-    with open(r"memes.json") as f: 
-        meme_list = json.load(f)
-        
-        for i in range(1):
-            meme = meme_list["meme"][str(random.randint(0,759))]
-            await channel_meme.send(meme)
+    """
+    Game Development Server
+    GameDevs
+    <discord.utils.SequenceProxy object at 0x000001AAC3777820>
+    1047890946110521354
+    """
+    channel = await bot.fetch_channel(str(channel_ids["GameDevelopmentServer"]["general"]))
+    await channel.send(
+        """
+        Gimme some bambo in here, pwease! Panda-chan's tummy needs some yummies to munch on! Nom nom nom!
+        """
+    )
 
 @bot.command() # decorator basically called when discord message starts with command_prefix 
 async def hello(ctx): # when ".hello" typed in servers bot replies to that message with "Hello World"
@@ -120,7 +142,15 @@ async def hello(ctx): # when ".hello" typed in servers bot replies to that messa
     print("message after split:")
     print(my_message)
     await ctx.reply("Hello world") #sends a reply to that message
-    await ctx.reply("https://i.scdn.co/image/ab6761610000e5eb72c4ca30476ce87954961a10")
+
+@bot.command()
+async def newmessage(ctx):
+    print(ctx.message.content)
+    my_message=ctx.message.content.lower().split('->')
+    print(ctx.guild)
+    # await ctx.send(my_message[1])
+    channel = await bot.fetch_channel(channel_ids["GameDevelopmentServer"][my_message[1]])
+    await channel.send(my_message[2])
 
 @bot.command()
 async def bye(ctx): # when ".bye" typed in servers bot replies to that message with "Goodbye"
@@ -266,19 +296,18 @@ async def mute(ctx,member:discord.Member, time: int, how_long:str): # function t
             await ctx.reply(f"{ctx.author.name} is not a admin")
 
 @bot.command()
-async def sp(ctx):
+async def sp(ctx): #function to query spotify artist and/or album Ex. .sp -kota the friend- -> return spotify artist #Ex. .sp -kota the friend- everything
     message = ctx.message.content.split('-')
     spotify_artist = message[1]
     album_name = message[2].replace(" ","")
     # print(message)
     print(spotify_artist,album_name)
-    s = Spotify()
+    s = Spotify_API.Spotify()
     # print(s.get_artist_album(spotify_artist,album_name))
     artist = s.search(spotify_artist)
     # # print(spotify_data)
 
     if album_name:
-        # print("3434")
         # artist = s.search(spotify_artist)
         data = {}
         for i in s.album_list:
