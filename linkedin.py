@@ -61,7 +61,7 @@ def transform(soup):
 
 
 
-        print(data)
+        # print(data)
         jobs.append(data)
     return jobs
 

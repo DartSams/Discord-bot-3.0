@@ -26,41 +26,60 @@ high_level_roles = ["admin"] # list of top level role names to give admin status
 channel_ids = {
     "test-server":{},
     "GameDevelopmentServer":{
-        "concept":1047893711771676702,
-        "pixel":1047899028211384380,
-        "deadlines":1047898244933505114,
-        "3d-drawings":1047892668719579169,
-        "voice-acting":1050531521729142794,
-        "levels":1047897871267139586,
-        "github":1106368683208626209,
-        "sound design":1050531461066928158,
-        "idea-generator":1047892787892322304,
-        "gaming":1047903017942405190,
-        "postings":1111115259596517426,
-        "background-art":1047893634063810570,
-        "the rooftop":1047890947150716928,
-        "notifications":1047911263520440400,
-        "Admin Playground":1047891194157477989,
-        "Spitballing":1047892506127372288,
-        "playstation":1047903065237377094,
-        "xbox":1047903096560439327,
-        "test-commands":1047893027554873395,
-        "moderate":1047892984890392627,
-        "tiles":1047897829584142466,
-        "music":1050531492343840848,
-        "Job-postings":1111114688424583249,
-        "Art Showcase":1047891469316411443,
-        "Mainframe":1106368333789532190,
-        "home-talk":1047901611806183534,
-        "inspiration":1053367634420314123,
-        "general":1047890947150716930,
-        "steam":1047903119557791874,
-        "friday nights":1047899859119771809,
-        "2d-drawings":1047892607210106930,
-        "trello":1111115906265927740,
-        "personal":1047901381295603813,
-        "animation":1047902387223937114,
-        "talk":1047901188928045076
+        "Information": 989899212856623186,
+        "welcome-and-rules": 989899212856623187,
+        "notes-resources": 989899212856623188,
+        "Text Channels": 989899212856623189,
+        "general": 989899213422878730,
+        "homework-help": 989899213422878731,
+        "session-planning": 989899213422878732,
+        "off-topic": 989899213422878733,
+        "Voice Channels": 989899213422878734,
+        "Study Room": 989899213422878735,
+        "Study Room 1": 989899213422878736,
+        "Voice Chat": 992072925295423619,
+        "saturday-of-the-weebs": 1012697333026258974,
+        "concept": 1047893711771676702,
+        "pixel": 1047899028211384380,
+        "3d-drawings": 1047892668719579169,
+        "voice-acting": 1050531521729142794,
+        "useful-links": 1159294922906677388,
+        "levels": 1047897871267139586,
+        "interview-questions": 1161018171390701698,
+        "memes": 1116809911544844329,
+        "paid-studies": 1148441761501413486,
+        "Sound design": 1050531461066928158,
+        "workshops": 1162096768637485117,
+        "Academic Opportunities": 1162068212863733850,
+        "idea-generator": 1047892787892322304,
+        "postings": 1111115259596517426,
+        "leadership-progams": 1148440480233832469,
+        "interships": 1125962955595464804,
+        "fellowships": 1136003263603425361,
+        "externships": 1162064390690971689,
+        "background-art": 1047893634063810570,
+        "full-time": 1148439830498390036,
+        "the rooftop": 1047890947150716928,
+        "notifications": 1047911263520440400,
+        "Admin Playground": 1047891194157477989,
+        "Spitballing": 1047892506127372288,
+        "scholarships": 1127703669731762287,
+        "test-commands": 1047893027554873395,
+        "moderate": 1047892984890392627,
+        "tiles": 1047897829584142466,
+        "music": 1050531492343840848,
+        "Job Postings": 1111114688424583249,
+        "Art Showcase": 1047891469316411443,
+        "organizations": 1162075922531369061,
+        "inspiration": 1053367634420314123,
+        "general": 1047890947150716930,
+        "friday nights": 1047899859119771809,
+        "2d-drawings": 1047892607210106930,
+        "Interview Prep": 1162069571960848435,
+        "birthday": 1166655376809275422,
+        "confess-sins": 1115051583705731162,
+        "animation": 1047902387223937114,
+        "Friday nights": 1047901188928045076
     }
 }
 
@@ -70,7 +89,7 @@ async def on_ready():
     print(f"{bot.user} is here")
 
     ##shows every server that the bot is on
-    # for i in bot.guilds:
+    for i in bot.guilds:
     #     print(i.name)
     #     print(i.members)
     #     print(i.id)
@@ -84,8 +103,8 @@ async def on_ready():
             # guildMembers[i.name][member.name] = [member.name,member.discriminator] #gets all users in current server loop and creates new entry
 
         ##list all the channels
-        # for channel in i.channels:
-        #     print(f"channel: {channel} - id: {channel.id}")
+        for channel in i.channels:
+            print(f"channel: {channel} - id: {channel.id}") #on start will print every channel and its channel id that the discord is in
 
 
     # print(guildMembers)
@@ -123,10 +142,10 @@ async def auto_send():
     <discord.utils.SequenceProxy object at 0x000001AAC3777820>
     1047890946110521354
     """
-    channel = await bot.fetch_channel(str(channel_ids["GameDevelopmentServer"]["general"]))
+    channel = await bot.fetch_channel(str(channel_ids["GameDevelopmentServer"]["memes"]))
     # await channel.send(
     #     """
-    #     Gimme some bambo in here, pwease! Panda-chan's tummy needs some yummies to munch on! Nom nom nom!
+    #     Where are the Panda baddies at. With the good coochie. I need to eat some good pussy like I'm supposed to.
     #     """
     # )
     jobs = [
@@ -135,7 +154,7 @@ async def auto_send():
     ]
     for i in transform(extract(random.choice(jobs))):
         channel = await bot.fetch_channel(str(channel_ids["GameDevelopmentServer"]["postings"]))
-        await channel.send(i["link"])
+        #await channel.send(i["link"])
 
 
 @bot.command() # decorator basically called when discord message starts with command_prefix 
@@ -148,15 +167,17 @@ async def hello(ctx): # when ".hello" typed in servers bot replies to that messa
     my_message=ctx.message.content.lower().split(' ')
     print("message after split:")
     print(my_message)
-    await ctx.reply("Hello world") #sends a reply to that message
+    await ctx.reply("Konicha Wassupp") #sends a reply to that message
 
 @bot.command()
 async def newmessage(ctx):
     print(ctx.message.content)
     my_message=ctx.message.content.lower().split('->')
-    print(ctx.guild)
+    print(my_message)
     # await ctx.send(my_message[1])
-    channel = await bot.fetch_channel(channel_ids["GameDevelopmentServer"][my_message[1]]) #send a message to the channel the user wants (.newmessage -> {channel name}->web developer) Ex. .newmessage -> postings->web developer
+    #channel = await bot.fetch_channel(channel_ids["GameDevelopmentServer"][my_message[1]]) #send a message to the channel the user wants (.newmessage -> {channel name}->web developer) Ex. .newmessage -> postings->web developer
+    channel = await bot.fetch_channel(str(channel_ids["GameDevelopmentServer"][my_message[1]]))
+    
     await channel.send(my_message[2]) #makes the bot send the message that is withing the 3 index of the message send (.newmessage -> {channel name}->{message})
     
 @bot.command()
@@ -201,16 +222,16 @@ async def giverole(ctx, arg: discord.Member, *, role:discord.Role): # function t
             await ctx.send(f"{ctx.author} is now a {role}")
 
 @bot.command(pass_context=True)
-async def takerole(ctx, arg: discord.Member, *, role:discord.Role): # function to create any user admin privilege Ex. ".giverole @Enemy of my Enemy admin"
+async def takerole(ctx, arg: discord.Member, *, role:discord.Role): # function to create any user admin privilege Ex. ".takerole @Enemy of my Enemy admin"
     for user in main_table.table.find({ "name": ctx.author.name}): #finds message sender in mongodb
         print(user)
         if user["privilege"] == "admin" and ctx.message.author.guild_permissions.administrator: #checks if user has privilege of admin
             main_table.create_admin(arg.discriminator) # function to update privilege in mongodb
-            await arg.remove_roles(role) # gives role to discord user mentioned in message sent (by mentioned name after @ symbol)
+            await arg.remove_roles(role) # removes role to discord user mentioned in message sent (by mentioned name after @ symbol)
             await ctx.send(f"{ctx.author} is no longer a {role}")
 
 @bot.command(pass_context=True)
-async def createrole(ctx,name:str,color_message:str): # creates a new role Ex. .createrole creator
+async def createrole(ctx,name:str,color_message:str): # creates a new role Ex. .createrole creator red
     for user in main_table.table.find({ "name": ctx.author.name}): #finds message sender in mongodb
         # print(user)
         if user["privilege"] == "admin" and ctx.message.author.guild_permissions.administrator: #checks if user has privilege of admin
@@ -240,7 +261,7 @@ async def createrole(ctx,name:str,color_message:str): # creates a new role Ex. .
             await ctx.send("Your not a admin cant give roles contact a admin")
 
 @bot.command()
-async def addAll(ctx): # adds all members in all discord servers to the db
+async def addAll(ctx): # adds all members in all discord servers to the db (Ex. .addAll)
     for i in bot.guilds:
         # print(i.name) #return iterated server names
         # print(i.members) #returns list of all members in iterated server
@@ -288,9 +309,7 @@ async def unban(ctx,member:discord.Member,reason=None): # unbans someone from se
 
 @bot.command()
 async def kick(ctx,member:discord.Member,reason=None): # kicks server member from server that message was sent in Ex. .kick @Enemy of my Enemy was being rude
-    for user in main_table.table.find({ "name": ctx.author.name}): #finds message sender in mongodb
-        # print(user)
-        if user["privilege"] == "admin" and ctx.message.author.guild_permissions.administrator: #checks if user has privilege of admin in mongodb and checks in discord roles
+        if ctx.message.author.guild_permissions.administrator: #checks if user has privilege of admin in mongodb and checks in discord roles
             print(ctx.message.content)
             print(member,reason)
             await member.kick()
@@ -360,7 +379,30 @@ async def sp(ctx): #function to query spotify artist and/or album Ex. .sp -kota 
         await ctx.send(artist["name"])
 
 
+@bot.command()
+async def helpList(ctx):
+    help_text = """
+        Below are the commands I am capable of...
+
+        # (Ex. .hello) typed in servers bot replies to that message with "Hello World"
+        # (Ex. .newmessage ->{channel name}->{message}) makes the bot send the message that is withing the 3 index of the message send 
+        # (Ex. .scrape ->postings->web developer) send a message to the channel the user wants (.scrape -> {channel name}->web developer) 
+        # (Ex. .bye) typed in servers bot replies to that message with "Goodbye"
+        # (Ex. .showdb) returns a list of all useds in db 
+        # (Ex. .giverole @Enemy of my Enemy admin) gives any user privilege 
+        # (Ex. .takerole @Enemy of my Enemy admin) remove any user privilege 
+        # (Ex. .createrole creator red) creates a new role with a color
+        # (Ex. .addAll) adds all members in all discord servers to the db 
+        # (Ex. .massDestroy) deletes all users in db 
+        # (Ex. .ban @Enemy of my Enemy was being rude) kicks someone from server and bans them so they can rejoin 
+        # (Ex. .unban @Enemy of my Enemy has earned a free pass) unbans someone from server 
+        # (Ex. .kick @Enemy of my Enemy was being rude) kick  s server member from server that message was sent in 
+        # (Ex. .mute @Enemy of my Enemy 2 min) timeouts server members (member cant type/text in any channel in server for amount of time) 
+        # (Ex. .sp -kota the friend- everything) function to query spotify artist and/or album (Ex. .sp -kota the friend)- -> return spotify artist 
+    """
+
+    await ctx.send(help_text)
 
 # bot.run(os.environ('discord_token'))
-my_secret = os.environ['Discord_Token']
+my_secret = "MTAzOTc0NzQzMjc2Mzg5MTc1Mg.GGbZ4G.N4R4sBmZtBSSnoIZr26DYXDn_Pj42RLpUf_EHw"
 bot.run(my_secret)
