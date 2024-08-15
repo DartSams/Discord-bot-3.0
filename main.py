@@ -410,6 +410,5 @@ async def helpList(ctx):
 
     await ctx.send(help_text)
 
-# bot.run(os.environ.get('discord_token'))
-my_secret = "MTAzOTc0NzQzMjc2Mzg5MTc1Mg.GvJjcm.tWc9Ns_7rqzVKcps2SN_5THzkNPFVVyYgENiIM"
-bot.run(my_secret)
+bot.run(os.environ.get('discord_token'))
+# bot.run(my_secret)
