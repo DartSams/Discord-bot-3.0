@@ -5,8 +5,10 @@ from datetime import timedelta
 import os
 import random
 import json
+import Google_Calendar_API.calendar_test
 from MyDB import DiscordTable
 import Spotify_API
+import Google_Calendar_API
 from linkedin import transform, extract
 ##docs##
 #https://discordpy.readthedocs.io/en/latest/api.html
@@ -107,6 +109,7 @@ async def on_ready():
             print(f"channel: {channel} - id: {channel.id}") #on start will print every channel and its channel id that the discord is in
 
 
+
     # print(guildMembers)
     auto_send.start() #function to automatically send messages to any channel using the channel id
 
@@ -144,9 +147,7 @@ async def auto_send():
     """
     channel = await bot.fetch_channel(str(channel_ids["GameDevelopmentServer"]["memes"]))
     # await channel.send(
-    #     """
-    #     Where are the Panda baddies at. With the good coochie. I need to eat some good pussy like I'm supposed to.
-    #     """
+    #     
     # )
     jobs = [
         "Computer Science", "IT", "Software Engineer", "Software Developer",
@@ -156,6 +157,12 @@ async def auto_send():
         channel = await bot.fetch_channel(str(channel_ids["GameDevelopmentServer"]["postings"]))
         #await channel.send(i["link"])
 
+    gc = Google_Calendar_API.calendar_test
+    gc_events = gc.show_upcoming_events()
+    
+    channel = await bot.fetch_channel(channel_ids["GameDevelopmentServer"]["birthday"])
+    for i in gc_events:
+        await channel.send(i)
 
 @bot.command() # decorator basically called when discord message starts with command_prefix 
 async def hello(ctx): # when ".hello" typed in servers bot replies to that message with "Hello World"
@@ -403,6 +410,6 @@ async def helpList(ctx):
 
     await ctx.send(help_text)
 
-# bot.run(os.environ('discord_token'))
-my_secret = "MTAzOTc0NzQzMjc2Mzg5MTc1Mg.GGbZ4G.N4R4sBmZtBSSnoIZr26DYXDn_Pj42RLpUf_EHw"
+# bot.run(os.environ.get('discord_token'))
+my_secret = "MTAzOTc0NzQzMjc2Mzg5MTc1Mg.GvJjcm.tWc9Ns_7rqzVKcps2SN_5THzkNPFVVyYgENiIM"
 bot.run(my_secret)
